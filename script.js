@@ -57,8 +57,8 @@ canvas.addEventListener('mousemove', function (e) {
         const item = GetItemAt(mouseX, mouseY);
         if (item) {
             popup.textContent = item.info;
-            popup.style.left = '${e.clientX + 10}px';
-            popup.style.top = '${e.clientY + 10}px';
+            popup.style.left = `${e.clientX + 10}px`;
+            popup.style.top = `${e.clientY + 10}px`;
             popup.style.display = 'block';
         } else {
             popup.style.display = 'none';
