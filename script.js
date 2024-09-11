@@ -29,9 +29,10 @@ function DrawItems() {
 }
 
 function GetItemAt(x, y) {
+    const adjustedY = y - offsetY;
     for (const item of items) {
         if (x >= item.x && x <= item.x + item.width &&
-            y >= item.y && y <= item.y + item.height) {
+            adjustedY >= item.y && adjustedY <= item.y + item.height) {
             return item
         }
     }
