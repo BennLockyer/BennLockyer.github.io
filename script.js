@@ -7,6 +7,9 @@ let isPanning = false;
 let startX, startY;
 let offsetX = 0, offsetY = 0;
 
+const gardenWidth = 2000;
+const gardenHeight = 1500;
+
 const items = [
     { id: "item1", x: 50, y: 50, width: 100, height: 100, color: 'blue' },
     { id: "item2", x: 200, y: 100, width: 150, height: 100, color: 'green' }
@@ -20,18 +23,23 @@ function DrawItems() {
         canvasContext.fillStyle = item.color;
         canvasContext.fillRect(item.x, item.y, item.width, item.height);
     });
+    canvasContext.restore();
 }
 
 canvas.addEventListener('mousedown', function (e) {
     isPanning = true;
-    startX = e.offsetX - offsetX;
-    startY = e.offsetY - offsetY;
+    startX = e.clientX - offsetX;
+    startY = e.clientY - offsetY;
 });
 
 canvas.addEventListener('mousemove', function (e) {
     if (isPanning) {
-        offsetX = e.offsetX - startX;
-        offsetY = e.offsetY - startY;
+        const newOffsetX = e.clientX - startX;
+        const newOffsetY = e.clientY - startY;
+
+        offsetX = Math.min(0, Math.max(canvas.width - cityWidth, newOffsetX));
+        offsetY = Math.min(0, Math.max(canvas.height - cityHeight, newOffsetY));
+
         DrawItems();
     }
 });
