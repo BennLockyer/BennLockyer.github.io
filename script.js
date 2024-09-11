@@ -12,7 +12,7 @@ const gardenHeight = 2500;
 
 const items = [
     { id: "item1", x: 50, y: 50, width: 100, height: 100, color: 'blue' },
-    { id: "item2", x: 200, y: 100, width: 150, height: 100, color: 'green' }
+    { id: "item2", x: 200, y: 100, width: 150, height: 100, color: 'green' },
     { id: "item3", x: 150, y: 900, width: 80, height: 110, color: 'red' }
 ];
 
