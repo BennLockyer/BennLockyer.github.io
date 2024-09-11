@@ -37,8 +37,8 @@ canvas.addEventListener('mousemove', function (e) {
         const newOffsetX = e.clientX - startX;
         const newOffsetY = e.clientY - startY;
 
-        offsetX = Math.min(0, Math.max(canvas.width - cityWidth, newOffsetX));
-        offsetY = Math.min(0, Math.max(canvas.height - cityHeight, newOffsetY));
+        offsetX = Math.min(0, Math.max(canvas.width - gardenWidth, newOffsetX));
+        offsetY = Math.min(0, Math.max(canvas.height - gardenHeight, newOffsetY));
 
         DrawItems();
     }
