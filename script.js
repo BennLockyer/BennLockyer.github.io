@@ -14,6 +14,11 @@ let offsetY = 0;
 const gardenWidth = canvas.width;
 const gardenHeight = 2500;
 
+function Draw() {
+    DrawBackground();
+    DrawItems();
+}
+
 function DrawBackground() {
     const pattern = canvasContext.createPattern(backgroundImage, 'repeat');
     canvasContext.fillStyle = pattern;
@@ -31,15 +36,14 @@ const items = [
     { id: "item3", x: 150, y: 900, width: 80, height: 110, color: 'red', info: 'Test 3 - A red rectangle' }
 ];
 
-function DrawItems() {
-    DrawBackground();
-    //canvasContext.save()
+function DrawItems() {    
+    canvasContext.save()
     canvasContext.translate(0, offsetY)
     items.forEach(item => {
         canvasContext.fillStyle = item.color;
         canvasContext.fillRect(item.x, item.y, item.width, item.height);
     });
-    //canvasContext.restore();
+    canvasContext.restore();
 }
 
 function GetItemAt(x, y) {
@@ -63,7 +67,7 @@ canvas.addEventListener('mousemove', function (e) {
         const newOffsetY = e.clientY - startY;
         offsetY = Math.min(0, Math.max(canvas.height - gardenHeight, newOffsetY));
 
-        DrawItems();
+        Draw();
     } else {
         const rect = canvas.getBoundingClientRect();
         const mouseX = e.clientX - rect.left;
@@ -96,7 +100,7 @@ canvas.addEventListener('touchmove', function (e) {
         const touch = e.touches[0];
         const newOffsetY = touch.clientY - startY;
         offsetY = Math.min(0, Math.max(canvas.height - gardenHeight, newOffsetY));
-        DrawItems();
+        Draw();
     }
 });
 
@@ -105,4 +109,4 @@ canvas.addEventListener('touchend', function () {
 });
 
 
-DrawItems();
+Draw();
