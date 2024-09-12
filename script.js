@@ -14,10 +14,7 @@ let offsetY = 0;
 const gardenWidth = canvas.width;
 const gardenHeight = 2500;
 
-function Draw() {
-    DrawBackground();
-    DrawItems();
-}
+
 
 function DrawBackground() {
     const pattern = canvasContext.createPattern(backgroundImage, 'repeat');
@@ -45,6 +42,13 @@ function DrawItems() {
     });
     canvasContext.restore();
 }
+
+function Draw() {
+    DrawBackground();
+    DrawItems();
+}
+
+Draw();
 
 function GetItemAt(x, y) {
     const adjustedY = y - offsetY;
@@ -107,6 +111,3 @@ canvas.addEventListener('touchmove', function (e) {
 canvas.addEventListener('touchend', function () {
     isPanning = false;
 });
-
-
-Draw();
