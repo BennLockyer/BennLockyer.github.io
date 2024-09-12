@@ -19,8 +19,9 @@ const gardenHeight = 2500;
 function DrawBackground() {
     const pattern = canvasContext.createPattern(backgroundImage, 'repeat');
     canvasContext.fillStyle = pattern;
-    const patternY = -offsetY % backgroundImage.height;
-    canvasContext.fillRect(0, patternY, canvas.width, canvas.height + backgroundImage.height);
+    //const patternY = -offsetY % backgroundImage.height;
+    const patternY = 20;
+    canvasContext.fillRect(0, patternY, canvas.width, canvas.height + backgroundImage.height);    
 }
 
 backgroundImage.onload = function () {
@@ -38,7 +39,7 @@ function DrawItems() {
     canvasContext.translate(0, offsetY)
     items.forEach(item => {
         canvasContext.fillStyle = item.color;
-        canvasContext.fillRect(item.x, item.y, item.width, item.height);
+        canvasContext.fillRect(item.x, item.y, item.width, item.height);        
     });
     canvasContext.restore();
 }
