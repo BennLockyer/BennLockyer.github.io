@@ -21,7 +21,7 @@ function DrawBackground() {
     canvasContext.fillStyle = pattern;
     const patternY = offsetY % backgroundImage.height;
     canvasContext.fillRect(0, patternY, gardenWidth, gardenHeight);// canvas.width, canvas.height + backgroundImage.height);    
-    canvasContext.drawImage(backgroundImage, 0, patternY);
+    canvasContext.drawImage(backgroundImage, 0, patternY, gardenWidth, gardenHeight);
 }
 
 backgroundImage.onload = function () {
@@ -36,7 +36,7 @@ const items = [
 
 function DrawItems() {    
     canvasContext.save()
-    //canvasContext.translate(0, offsetY)
+    canvasContext.translate(0, offsetY)
     items.forEach(item => {
         canvasContext.fillStyle = item.color;
         canvasContext.fillRect(item.x, item.y, item.width, item.height);        
