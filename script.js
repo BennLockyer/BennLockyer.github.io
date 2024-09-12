@@ -19,8 +19,8 @@ const gardenHeight = 2500;
 function DrawBackground() {
     const pattern = canvasContext.createPattern(backgroundImage, 'repeat');
     canvasContext.fillStyle = pattern;
-    //const patternY = -offsetY % backgroundImage.height;
-    const patternY = 20;
+    const patternY = -offsetY % backgroundImage.height;
+    console.log("PatternY: " + patternY);
     canvasContext.fillRect(0, patternY, canvas.width, canvas.height + backgroundImage.height);    
 }
 
