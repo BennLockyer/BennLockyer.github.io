@@ -27,15 +27,14 @@ function DrawBackground() {
 }
 
 const items = [
-    { id: "item1", x: 0, y: 0, width: 0, height: 0, color: 'blue', info: 'Test 1 - A blue square' },
-    { id: "item2", x: 0, y: 0, width: 0, height: 0, color: 'green', info: 'Test 2 - A green rectangle' },
-    { id: "item3", x: 0, y: 0, width: 0, height: 0, color: 'red', info: 'Test 3 - A red rectangle' }
+    { id: "item1", x: 0, y: 0, width: 0, height: 0, color: 'blue', info: 'In loving memory of blue square.' },
+    { id: "item2", x: 0, y: 0, width: 0, height: 0, color: 'green', info: 'Green square, always in our hearts.' },
+    { id: "item3", x: 0, y: 0, width: 0, height: 0, color: 'red', info: 'Red square - forever missed.' }
 ];
 
 backgroundImage.onload = function () {
     Draw();
 }
-
 
 function DrawItems() {    
     canvasContext.save()
