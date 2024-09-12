@@ -71,4 +71,24 @@ canvas.addEventListener('mouseup', function () {
     popup.style.display = 'none';
 });
 
+canvas.addEventListener('touchstart', function (e) {
+    isPanning = true;
+    const touch = e.touches[0];
+    startY = touch.clientY - offsetY;
+});
+
+canvas.addEventListener('touchmove', function (e) {
+    if (isPanning) {
+        const touch = e.touches[0];
+        const newOffsetY = touch.clientY - startY;
+        offsetY = Math.min(0, Math.max(canvas.height - gardenHeight, newOffsetY));
+        DrawItems();
+    }
+});
+
+canvas.addEventListener('touchend', function () {
+    isPanning = false;
+});
+
+
 DrawItems();
