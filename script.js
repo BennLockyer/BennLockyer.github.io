@@ -4,12 +4,25 @@ const canvas = document.getElementById('gardenCanvas');
 const canvasContext = canvas.getContext('2d');
 const popup = document.getElementById('popup');
 
+const backgroundImage = new Image();
+backgroundImage.src = "bg.png";
+
 let isPanning = false;
 let startY;
 let offsetY = 0;
 
 const gardenWidth = canvas.width;
 const gardenHeight = 2500;
+
+function DrawBackground() {
+    const pattern = canvasContext.createPattern(backgroundImage, 'repeat');
+    canvasContext.fillStyle = pattern;
+    canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+backgroundImage.onload = function () {
+    DrawBackground();
+}
 
 const items = [
     { id: "item1", x: 50, y: 50, width: 100, height: 100, color: 'blue', info: 'Test 1 - A blue square' },
@@ -18,7 +31,7 @@ const items = [
 ];
 
 function DrawItems() {
-    canvasContext.clearRect(0, 0, canvas.width, canvas.height);
+    DrawBackground();
     canvasContext.save()
     canvasContext.translate(0, offsetY)
     items.forEach(item => {
