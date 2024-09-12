@@ -19,9 +19,9 @@ function DrawBackground() {
     canvasContext.fillStyle = pattern;
     const patternY = offsetY % backgroundImage.height;
     canvasContext.clearRect(0, 0, canvas.width, canvas.height);
-    canvasContext.rect(0, patternY, gardenWidth, gardenHeight);
-    canvasContext.drawImage(backgroundImage, 0, patternY, gardenWidth, gardenHeight);
-    canvasContext.fillRect(0, patternY, gardenWidth, gardenHeight);
+    canvasContext.fillRect(0, offsetY, gardenWidth, gardenHeight);
+    canvasContext.drawImage(backgroundImage, 0, offsetY, gardenWidth, gardenHeight);
+    
 }
 
 backgroundImage.onload = function () {
