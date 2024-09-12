@@ -20,7 +20,6 @@ function DrawBackground() {
     canvasContext.clearRect(0, 0, canvas.width, canvas.height);
     const pattern = canvasContext.createPattern(backgroundImage, 'repeat');
     const diff = offsetY - lastOffset;
-    console.log("Offset: " + offsetY + " -- Diff: " + diff);
     canvasContext.fillStyle = pattern;
     canvasContext.translate(0, diff);
     canvasContext.fillRect(0, 0, gardenWidth, gardenHeight);
@@ -46,20 +45,22 @@ function DrawItems() {
     items.forEach(item => {
         const x = 10 + (col * 110);
         const y = 10 + (row * 110);
+
         canvasContext.fillStyle = item.color;
-        //canvasContext.fillRect(item.x, item.y, item.width, item.height);        
         canvasContext.fillRect(x, y, 100, 100);
         
         item.width = 100;
         item.height = 100;
         item.x = x;
         item.y = y;
+
         ++col;
         if (col > 6) {
             col = 0
             ++row;
         }
     });
+
     canvasContext.restore();
 }
 
