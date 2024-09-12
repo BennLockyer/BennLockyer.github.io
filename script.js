@@ -36,7 +36,7 @@ const items = [
 
 function DrawItems() {    
     canvasContext.save()
-    canvasContext.translate(0, offsetY)
+    //canvasContext.translate(0, offsetY)
     items.forEach(item => {
         canvasContext.fillStyle = item.color;
         canvasContext.fillRect(item.x, item.y, item.width, item.height);        
