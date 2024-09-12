@@ -33,13 +33,13 @@ const items = [
 
 function DrawItems() {
     DrawBackground();
-    canvasContext.save()
+    //canvasContext.save()
     canvasContext.translate(0, offsetY)
     items.forEach(item => {
         canvasContext.fillStyle = item.color;
         canvasContext.fillRect(item.x, item.y, item.width, item.height);
     });
-    canvasContext.restore();
+    //canvasContext.restore();
 }
 
 function GetItemAt(x, y) {
