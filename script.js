@@ -1,4 +1,4 @@
-alert("Welcome!");
+//alert("Welcome!");
 
 const canvas = document.getElementById('gardenCanvas');
 const canvasContext = canvas.getContext('2d');
@@ -10,36 +10,55 @@ backgroundImage.src = "bg.png";
 let isPanning = false;
 let startY;
 let offsetY = 0;
+let lastOffset = 0
 
 const gardenWidth = canvas.width;
 const gardenHeight = 2500;
 
-function DrawBackground() {
-    const pattern = canvasContext.createPattern(backgroundImage, 'repeat');
-    canvasContext.fillStyle = pattern;
+function DrawBackground() {    
     const patternY = offsetY % backgroundImage.height;
     canvasContext.clearRect(0, 0, canvas.width, canvas.height);
-    canvasContext.fillRect(0, offsetY, gardenWidth, gardenHeight);
-    canvasContext.drawImage(backgroundImage, 0, offsetY, gardenWidth, gardenHeight);
-    
-}
-
-backgroundImage.onload = function () {
-    DrawBackground();
+    const pattern = canvasContext.createPattern(backgroundImage, 'repeat');
+    const diff = offsetY - lastOffset;
+    console.log("Offset: " + offsetY + " -- Diff: " + diff);
+    canvasContext.fillStyle = pattern;
+    canvasContext.translate(0, diff);
+    canvasContext.fillRect(0, 0, gardenWidth, gardenHeight);
+    lastOffset = offsetY;
 }
 
 const items = [
-    { id: "item1", x: 50, y: 50, width: 100, height: 100, color: 'blue', info: 'Test 1 - A blue square' },
-    { id: "item2", x: 200, y: 100, width: 150, height: 100, color: 'green', info: 'Test 2 - A green rectangle' },
-    { id: "item3", x: 150, y: 900, width: 80, height: 110, color: 'red', info: 'Test 3 - A red rectangle' }
+    { id: "item1", x: 0, y: 0, width: 0, height: 0, color: 'blue', info: 'Test 1 - A blue square' },
+    { id: "item2", x: 0, y: 0, width: 0, height: 0, color: 'green', info: 'Test 2 - A green rectangle' },
+    { id: "item3", x: 0, y: 0, width: 0, height: 0, color: 'red', info: 'Test 3 - A red rectangle' }
 ];
+
+backgroundImage.onload = function () {
+    Draw();
+}
+
 
 function DrawItems() {    
     canvasContext.save()
-    canvasContext.translate(0, offsetY)
+    let row = 0
+    let col = 0
+    //canvasContext.translate(0, offsetY/15)
     items.forEach(item => {
+        const x = 10 + (col * 110);
+        const y = 10 + (row * 110);
         canvasContext.fillStyle = item.color;
-        canvasContext.fillRect(item.x, item.y, item.width, item.height);        
+        //canvasContext.fillRect(item.x, item.y, item.width, item.height);        
+        canvasContext.fillRect(x, y, 100, 100);
+        
+        item.width = 100;
+        item.height = 100;
+        item.x = x;
+        item.y = y;
+        ++col;
+        if (col > 6) {
+            col = 0
+            ++row;
+        }
     });
     canvasContext.restore();
 }
