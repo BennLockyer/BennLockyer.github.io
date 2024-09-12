@@ -3,6 +3,7 @@
 const canvas = document.getElementById('gardenCanvas');
 const canvasContext = canvas.getContext('2d');
 const popup = document.getElementById('popup');
+const closeButton = document.getElementById('close-btn');
 
 const backgroundImage = new Image();
 backgroundImage.src = "bg.png";
@@ -92,19 +93,6 @@ canvas.addEventListener('mousemove', function (e) {
         offsetY = Math.min(0, Math.max(canvas.height - gardenHeight, newOffsetY));
 
         Draw();
-    } else {
-        const rect = canvas.getBoundingClientRect();
-        const mouseX = e.clientX - rect.left;
-        const mouseY = e.clientY - rect.top;
-        const item = GetItemAt(mouseX, mouseY);
-        if (item) {
-            popup.textContent = item.info;
-            popup.style.left = `${e.clientX + 10}px`;
-            popup.style.top = `${e.clientY + 10}px`;
-            popup.style.display = 'block';
-        } else {
-            popup.style.display = 'none';
-        }
     }
 });
 
@@ -113,21 +101,48 @@ canvas.addEventListener('mouseup', function () {
     popup.style.display = 'none';
 });
 
-canvas.addEventListener('touchstart', function (e) {
+canvas.addEventListener('touchstart', HandleTouchStart, {passive: false });
+canvas.addEventListener('touchmove', HandleTouchMove, { passive: false });
+canvas.addEventListener('touchend', HandleTouchEnd, {});
+canvas.addEventListener('click', HandlePopup);
+closeButton.addEventListener('click', ClosePopup)
+
+function HandleTouchStart(e) {
     isPanning = true;
     const touch = e.touches[0];
     startY = touch.clientY - offsetY;
-});
+}
 
-canvas.addEventListener('touchmove', function (e) {
+function HandleTouchMove(e) {
     if (isPanning) {
         const touch = e.touches[0];
         const newOffsetY = touch.clientY - startY;
         offsetY = Math.min(0, Math.max(canvas.height - gardenHeight, newOffsetY));
         Draw();
     }
-});
+}
 
-canvas.addEventListener('touchend', function () {
+function HandleTouchEnd(e) {
     isPanning = false;
-});
+}
+
+function HandlePopup(e) {
+    e.preventDefault();
+
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+    const rect = canvas.getBoundingClientRect();
+    const canvasX = clientX - rect.left;
+    const canvasY = clientY - rect.top;
+    const item = GetItemAt(canvasX, canvasY);
+    if (item) {
+        popup.textContent = item.info;
+        popup.style.left = `${e.clientX + 10}px`;
+        popup.style.top = `${e.clientY + 10}px`;
+        popup.style.display = 'block';
+    }
+}
+function ClosePopup() {
+    popup.style.display = 'none';
+}
