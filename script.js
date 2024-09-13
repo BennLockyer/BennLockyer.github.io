@@ -3,6 +3,8 @@
 const canvas = document.getElementById('gardenCanvas');
 const canvasContext = canvas.getContext('2d');
 const popup = document.getElementById('popup');
+const popupText = document.getElementById('popup-text');
+const popupImage = document.getElementById('popup-image');
 const closeButton = document.getElementById('close-btn');
 
 const backgroundImage = new Image();
@@ -11,22 +13,23 @@ backgroundImage.src = "bg.png";
 let isPanning = false;
 let startY;
 let offsetY = 0;
-let lastOffset = 0
+let lastOffset = 0;
+
+let popupOpen = false;
 
 const gardenWidth = canvas.width;
 const gardenHeight = 2500;
 
-const itemWidth = 100;
-const itemHeight = 100;
-const gap = 10; // 10px gap between buildings
+const itemWidth = 150;
+const itemHeight = 150;
+const gap = 30; // 10px gap between buildings
 const totalCellWidth = itemWidth + gap; // 110px (building + gap)
 const totalCellHeight = itemHeight + gap; // 110px (building + gap)
-const initialOffsetX = 10; // Start offset for the first column
-const initialOffsetY = 10; // Start offset for the first row
-const columns = 7; // Number of columns per row
+const initialOffsetX = 30; // Start offset for the first column
+const initialOffsetY = 30; // Start offset for the first row
+const columns = 4; // Number of columns per row
 
-function DrawBackground() {    
-    const patternY = offsetY % backgroundImage.height;
+function DrawBackground() {
     canvasContext.clearRect(0, 0, canvas.width, canvas.height);
     const pattern = canvasContext.createPattern(backgroundImage, 'repeat');
     const diff = offsetY - lastOffset;
@@ -38,10 +41,11 @@ function DrawBackground() {
 
 const items = [];
 const itemData = [
-    { color: 'blue', info: 'In loving memory of blue square.' },
-    { color: 'green', info: 'Green square, always in our hearts.' },
-    { color: 'red', info: 'Red square - forever missed.' },
-    { color: 'yellow', info: 'Goodbye, yellow square'}
+    { image: 'images/img-0001.png', info: 'In loving memory.' },
+    { image: 'images/img-0002.png', info: 'Always in our hearts.' },
+    { image: 'images/img-0003.png', info: 'Forever missed.' },
+    { image: 'images/img-0004.png', info: 'Goodbye...'},
+    { image: 'images/img-0005.png', info: 'Mountain!'},
 ];
 
 backgroundImage.onload = function () {
@@ -63,7 +67,8 @@ function GenerateItems(){
             width: itemWidth,
             height: itemHeight,
             info: data.info,
-            color: data.color
+            image: data.image,
+            imageRef: null
         });
         ++idCounter;
     });
@@ -79,8 +84,21 @@ function DrawItems() {
         const x = initialOffsetX + (col * totalCellWidth);
         const y = initialOffsetY + (row * totalCellHeight);
 
-        canvasContext.fillStyle = item.color;
+        canvasContext.fillStyle = 'lightgray';
         canvasContext.fillRect(x, y, itemWidth, itemHeight);
+
+        if(item.imageRef == null){
+            const img = new Image();
+            img.src = item.image;
+            img.onload = function(){
+                item.imageRef = img;
+                DrawItems();
+                return;
+            }
+        }
+        if(item.imageRef){
+            canvasContext.drawImage(item.imageRef, item.x, item.y, item.width, item.height);
+        }
         
         item.width = itemWidth;
         item.height = itemHeight;
@@ -107,7 +125,7 @@ Draw();
 function GetNewItemAt(x, y){
      // Subtract the initial offsets before calculating the column and row
      const adjustedX = x - initialOffsetX;
-     const adjustedY = y - initialOffsetY;
+     const adjustedY = (y-offsetY) - initialOffsetY;
  
      // Make sure the x and y are within the building grid boundaries
      if (adjustedX < 0 || adjustedY < 0) return null;
@@ -118,7 +136,7 @@ function GetNewItemAt(x, y){
  
      // Calculate the building's index in the items array
      const index = row * columns + col;
- 
+
      // Check if the index is valid and if the x, y is within a building's area
      if (index >= 0 && index < items.length) {
          const item = items[index];
@@ -127,7 +145,7 @@ function GetNewItemAt(x, y){
  
          // Check if the click/tap is within the actual building area, not the gap
          if (x >= itemX && x <= itemX + itemWidth &&
-             y >= itemY && y <= itemY + itemHeight) {
+             (y-offsetY) >= itemY && (y-offsetY) <= itemY + itemHeight) {
              return item;
          }
      } 
@@ -139,7 +157,11 @@ canvas.addEventListener('mousedown', function (e) {
 });
 
 canvas.addEventListener('mousemove', function (e) {
+    if(popupOpen){
+        return;
+    }
     if (isPanning) {
+        popup.style.display = 'none';
         const newOffsetY = e.clientY - startY;
         offsetY = Math.min(0, Math.max(canvas.height - gardenHeight, newOffsetY));
 
@@ -149,7 +171,7 @@ canvas.addEventListener('mousemove', function (e) {
 
 canvas.addEventListener('mouseup', function () {
     isPanning = false
-    popup.style.display = 'none';
+    //popup.style.display = 'none';
 });
 
 canvas.addEventListener('touchstart', HandleTouchStart, {passive: false });
@@ -167,7 +189,11 @@ function HandleTouchStart(e) {
 
 function HandleTouchMove(e) {
     e.preventDefault();
+    if(popupOpen){
+        return;
+    }
     if (isPanning) {
+        popup.style.display = 'none';
         const touch = e.touches[0];
         const newOffsetY = touch.clientY - startY;
         offsetY = Math.min(0, Math.max(canvas.height - gardenHeight, newOffsetY));
@@ -190,13 +216,22 @@ function HandlePopup(e) {
     const canvasY = clientY - rect.top;
     //const item = GetItemAt(canvasX, canvasY);
     const item = GetNewItemAt(canvasX, canvasY);
+
     if (item) {
-        popup.textContent = item.info;
-        popup.style.left = `${e.clientX + 10}px`;
-        popup.style.top = `${e.clientY + 10}px`;
+        popupText.textContent = item.info;
+        popupImage.src = item.image;
         popup.style.display = 'block';
+        const popupWidth = popup.offsetWidth;
+        const popupHeight = popup.offsetHeight;
+        const centerX = (canvas.width / 2) - (popupWidth / 2);
+        const centerY = (canvas.height / 2) - (popupHeight / 2);    
+        popup.style.left = `${rect.left + centerX}px`;
+        popup.style.top = `${rect.top + centerY}px`;
+        popupOpen = true;
+        
     }
 }
 function ClosePopup() {
+    popupOpen = false;
     popup.style.display = 'none';
 }
