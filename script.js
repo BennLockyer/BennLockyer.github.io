@@ -16,6 +16,15 @@ let lastOffset = 0
 const gardenWidth = canvas.width;
 const gardenHeight = 2500;
 
+const itemWidth = 100;
+const itemHeight = 100;
+const gap = 10; // 10px gap between buildings
+const totalCellWidth = itemWidth + gap; // 110px (building + gap)
+const totalCellHeight = itemHeight + gap; // 110px (building + gap)
+const initialOffsetX = 10; // Start offset for the first column
+const initialOffsetY = 10; // Start offset for the first row
+const columns = 7; // Number of columns per row
+
 function DrawBackground() {    
     const patternY = offsetY % backgroundImage.height;
     canvasContext.clearRect(0, 0, canvas.width, canvas.height);
@@ -27,15 +36,39 @@ function DrawBackground() {
     lastOffset = offsetY;
 }
 
-const items = [
-    { id: "item1", x: 0, y: 0, width: 0, height: 0, color: 'blue', info: 'In loving memory of blue square.' },
-    { id: "item2", x: 0, y: 0, width: 0, height: 0, color: 'green', info: 'Green square, always in our hearts.' },
-    { id: "item3", x: 0, y: 0, width: 0, height: 0, color: 'red', info: 'Red square - forever missed.' }
+const items = [];
+const itemData = [
+    { color: 'blue', info: 'In loving memory of blue square.' },
+    { color: 'green', info: 'Green square, always in our hearts.' },
+    { color: 'red', info: 'Red square - forever missed.' },
+    { color: 'yellow', info: 'Goodbye, yellow square'}
 ];
 
 backgroundImage.onload = function () {
     Draw();
 }
+
+function GenerateItems(){
+    let idCounter = 1;
+    itemData.forEach((data, index) => {
+        const row = Math.floor(index / columns);
+        const col = index % columns;
+        const x = initialOffsetX + col * (itemWidth + gap);
+        const y = initialOffsetY + row * (itemHeight + gap);
+
+        items.push({
+            id: idCounter.toString(),
+            x: x,
+            y: y,
+            width: itemWidth,
+            height: itemHeight,
+            info: data.info,
+            color: data.color
+        });
+        ++idCounter;
+    });
+}
+GenerateItems();
 
 function DrawItems() {    
     canvasContext.save()
@@ -43,19 +76,19 @@ function DrawItems() {
     let col = 0
     //canvasContext.translate(0, offsetY/15)
     items.forEach(item => {
-        const x = 10 + (col * 110);
-        const y = 10 + (row * 110);
+        const x = initialOffsetX + (col * totalCellWidth);
+        const y = initialOffsetY + (row * totalCellHeight);
 
         canvasContext.fillStyle = item.color;
-        canvasContext.fillRect(x, y, 100, 100);
+        canvasContext.fillRect(x, y, itemWidth, itemHeight);
         
-        item.width = 100;
-        item.height = 100;
+        item.width = itemWidth;
+        item.height = itemHeight;
         item.x = x;
         item.y = y;
 
         ++col;
-        if (col > 6) {
+        if (col == columns) {
             col = 0
             ++row;
         }
@@ -71,15 +104,33 @@ function Draw() {
 
 Draw();
 
-function GetItemAt(x, y) {
-    const adjustedY = y - offsetY;
-    for (const item of items) {
-        if (x >= item.x && x <= item.x + item.width &&
-            adjustedY >= item.y && adjustedY <= item.y + item.height) {
-            return item
-        }
-    }
-    return null;
+function GetNewItemAt(x, y){
+     // Subtract the initial offsets before calculating the column and row
+     const adjustedX = x - initialOffsetX;
+     const adjustedY = y - initialOffsetY;
+ 
+     // Make sure the x and y are within the building grid boundaries
+     if (adjustedX < 0 || adjustedY < 0) return null;
+ 
+     // Calculate the column and row based on the adjusted x, y
+     const col = Math.floor(adjustedX / totalCellWidth);
+     const row = Math.floor(adjustedY / totalCellHeight);
+ 
+     // Calculate the building's index in the items array
+     const index = row * columns + col;
+ 
+     // Check if the index is valid and if the x, y is within a building's area
+     if (index >= 0 && index < items.length) {
+         const item = items[index];
+         const itemX = item.x;
+         const itemY = item.y;
+ 
+         // Check if the click/tap is within the actual building area, not the gap
+         if (x >= itemX && x <= itemX + itemWidth &&
+             y >= itemY && y <= itemY + itemHeight) {
+             return item;
+         }
+     } 
 }
 
 canvas.addEventListener('mousedown', function (e) {
@@ -135,7 +186,8 @@ function HandlePopup(e) {
     const rect = canvas.getBoundingClientRect();
     const canvasX = clientX - rect.left;
     const canvasY = clientY - rect.top;
-    const item = GetItemAt(canvasX, canvasY);
+    //const item = GetItemAt(canvasX, canvasY);
+    const item = GetNewItemAt(canvasX, canvasY);
     if (item) {
         popup.textContent = item.info;
         popup.style.left = `${e.clientX + 10}px`;
