@@ -165,6 +165,7 @@ function HandleTouchStart(e) {
 }
 
 function HandleTouchMove(e) {
+    e.preventDefault();
     if (isPanning) {
         const touch = e.touches[0];
         const newOffsetY = touch.clientY - startY;
