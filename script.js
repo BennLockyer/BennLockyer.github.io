@@ -159,6 +159,7 @@ canvas.addEventListener('click', HandlePopup);
 closeButton.addEventListener('click', ClosePopup)
 
 function HandleTouchStart(e) {
+    e.preventDefault();
     isPanning = true;
     const touch = e.touches[0];
     startY = touch.clientY - offsetY;
