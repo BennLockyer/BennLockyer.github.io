@@ -9,6 +9,8 @@ const closeButton = document.getElementById('close-btn');
 
 const backgroundImage = new Image();
 backgroundImage.src = "bg.png";
+const flowerImage = new Image();
+flowerImage.src = "flower.png";
 
 let isPanning = false;
 let startY;
@@ -39,6 +41,7 @@ function DrawBackground() {
     lastOffset = offsetY;
 }
 
+const flowers = [];
 const items = [];
 const itemData = [
     { image: 'images/img-0001.png', info: 'In loving memory.' },
@@ -75,8 +78,30 @@ function GenerateItems(){
 }
 GenerateItems();
 
+function GenerateFlowers() {
+    for(x = 0; x < 10; ++x) {
+        for(y = 0; y < 2; ++y){
+            const position = GetRandomSpotInGap(x+1);
+            flowers.push({
+                x: position.x,
+                y: position.y
+            });
+        }
+    }
+}
+GenerateFlowers();
+
+function GetRandomSpotInGap(row){
+    console.log("Row is: " + row);
+    const startY = 15 + (row * (itemHeight + gap));
+    const x = Math.random() * (gardenWidth - 50);
+    const y = (Math.random() * 10) + startY - 50;
+    console.log("Y is " + y + ". StartY is " + startY);
+    return {x: x, y: y};
+}
+
 function DrawItems() {    
-    canvasContext.save()
+    canvasContext.save();
     let row = 0
     let col = 0
     //canvasContext.translate(0, offsetY/15)
@@ -110,13 +135,26 @@ function DrawItems() {
             col = 0
             ++row;
         }
+
+        DrawFlowers();
     });
 
     canvasContext.restore();
 }
 
+function DrawFlowers(){
+    //canvasContext.save();
+    flowers.forEach(flower =>{        
+        //canvasContext.clearRect(flower.x, flower.y, 50, 50);
+        //canvasContext.fillRect(flower.x, flower.y, 50, 50);
+        canvasContext.drawImage(flowerImage, flower.x, flower.y, 50, 50);
+    });
+    //canvasContext.restore();
+}
+
 function Draw() {
-    DrawBackground();
+    DrawBackground();    
+    
     DrawItems();
 }
 
